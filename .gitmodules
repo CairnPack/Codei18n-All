@@ -1,0 +1,12 @@
+[submodule "Codei18n"]
+	path = Codei18n
+	url = https://github.com/CairnPack/Codei18n.git
+[submodule "Codei18n-IDEA"]
+	path = Codei18n-IDEA
+	url = https://github.com/CairnPack/Codei18n-IDEA.git
+[submodule "Codei18n-VSC"]
+	path = Codei18n-VSC
+	url = https://github.com/CairnPack/Codei18n-VSC.git
+[submodule "Codei18nDesktop"]
+	path = Codei18nDesktop
+	url = https://github.com/CairnPack/Codei18nDesktop.git
