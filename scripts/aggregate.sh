@@ -26,11 +26,10 @@ COMPONENTS=(
   "core|CairnPack/Codei18n|Codei18n"
   "IDEA 插件|CairnPack/Codei18n-IDEA|Codei18n-IDEA"
   "Desktop|CairnPack/Codei18nDesktop|Codei18nDesktop"
-)
-# 有子模块但不在聚合范围内的组件。
-EXCLUDED=(
   "VS Code 扩展|CairnPack/Codei18n-VSC|Codei18n-VSC"
 )
+# 有子模块但不在聚合范围内的组件（目前没有）。
+EXCLUDED=()
 # 聚合 Release 自己生成的文件名，组件附件与之重名时加仓库名前缀。
 RESERVED=(SHA256SUMS.txt nightly-manifest.json)
 
