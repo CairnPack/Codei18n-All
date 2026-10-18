@@ -1,0 +1,60 @@
+name: Release
+
+# 手动创建聚合发行版：tag 为日期 CalVer（例如 2026.10.18），表示一组子模块指针的快照，不跟随任何组件的版本号。
+# 读取子模块指针，在每个组件仓库中找到 tag 指向该提交（或提交的树相同）的正式 Release，
+# 下载全部附件、生成 SHA256SUMS.txt，创建聚合 Release。找不到对应 Release 时失败，并指出是哪个组件。
+# 逻辑在 scripts/aggregate.sh 中。
+#
+# pull_request 只做 dry-run（收集、校验、生成正文），不发布。
+# 只使用 GITHUB_TOKEN；组件仓库都是公开的，跨仓库下载 Release 附件不需要 PAT。
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: '聚合版本号（日期 CalVer，例如 2026.10.18；同一天再次发布用 2026.10.18.1）'
+        required: true
+        type: string
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/release.yml'
+      - 'scripts/aggregate.sh'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: aggregate-release
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    name: 验证（dry-run）
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 收集组件 Release（不发布）
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: bash scripts/aggregate.sh release "$(TZ=Asia/Taipei date +%Y.%-m.%-d)" --dry-run
+
+  release:
+    name: 创建聚合 Release
+    # 聚合版只从默认分支的子模块指针创建。
+    if: github.event_name == 'workflow_dispatch' && github.ref_name == github.event.repository.default_branch
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 收集组件 Release 并发布
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ inputs.version }}
+        run: bash scripts/aggregate.sh release "$VERSION"
