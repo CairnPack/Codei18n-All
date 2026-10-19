@@ -60,6 +60,22 @@ cd Codei18n-IDEA
 
 注意：`test-ide.ps1` 与桌面端完整构建都很占资源，不要同时运行。
 
+### VS Code 扩展（Codei18n-VSC）
+
+需要 Node.js 22。只读取 `.codei18n` 缓存，用行尾幽灵文字、悬停和侧边译文视图显示注释译文；只通过 GitHub Release 分发 VSIX（命令面板 → Extensions: Install from VSIX…）。
+
+```powershell
+cd Codei18n-VSC
+npm ci
+npm run lint; npm test        # 类型检查 + 单测（含与 core 的一致性测试）
+npm run test:integration      # 下载并启动真实的 VS Code 跑集成测试（VSCODE_VERSION 指定版本）
+npm run package               # 产出 codei18n-vscode-<版本>.vsix
+```
+
+## 聚合发行版
+
+`scripts/aggregate.sh`（由 `.github/workflows/release.yml`、`nightly.yml` 调用）按子模块指针收集 core、IDEA 插件、Desktop、VS Code 扩展各自的 GitHub Release 附件，生成 `SHA256SUMS.txt` 后发布聚合 Release；VS Code 扩展的附件是 `codei18n-vscode-<版本>.vsix` 与 `.sha256`。
+
 ## 更新子模块到各自远端最新
 
 ```bash
